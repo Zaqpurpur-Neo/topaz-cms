@@ -13,8 +13,6 @@ func (pc *PostController) CreatePost(c *gin.Context) {
 }
 
 func (pc *PostController) GetSinglePost(c *gin.Context) {
-	id := c.Param("id")
-
 }
 
 func (pc *PostController) GetPosts(c *gin.Context) {

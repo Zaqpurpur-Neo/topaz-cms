@@ -35,7 +35,7 @@
 
     <div class="badge-side-panel">
         <div class="badge-wrapper">
-            <img src="topaz.webp" alt="topaz badge" />
+            <img src="/topaz.webp" alt="topaz badge" />
         </div>
     </div>
 </section>

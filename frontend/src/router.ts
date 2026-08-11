@@ -5,6 +5,7 @@ import {
   GitPullRequest,
   Images,
   LayoutList,
+  Palette,
   type LucideIcon,
 } from "@lucide/svelte";
 
@@ -12,6 +13,8 @@ import MainPanel from "./lib/MainPanel.svelte";
 import MediaPanel from "./lib/MediaPanel.svelte";
 import FormPanel from "./lib/FormPanel.svelte";
 import GitPushPanel from "./lib/GitPushPanel.svelte";
+import KritaWorkspacePanel from "./lib/KritaWorkspacePanel.svelte";
+import KritaWorkspaceItemPanel from "./lib/KritaWorkspaceItemPanel.svelte";
 
 type RouteItem = {
   path: string;
@@ -43,6 +46,20 @@ const routerNameBuilder = createRouterName([
     icon: LayoutList,
     component: MainPanel,
     isVisible: true,
+  },
+  {
+    path: "/krita-workspace",
+    title: "Krita Workspace",
+    icon: Palette,
+    component: KritaWorkspacePanel,
+    isVisible: true,
+  },
+  {
+    path: "/krita-workspace/:workspace",
+    title: "Krita Workspace",
+    icon: Palette,
+    component: KritaWorkspaceItemPanel,
+    isVisible: false,
   },
   {
     path: "/media",

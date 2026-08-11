@@ -1,6 +1,7 @@
 package main
 
 import (
+	"art-cms/config"
 	"art-cms/routes"
 	"embed"
 	"fmt"
@@ -11,16 +12,18 @@ import (
 
 var frontendAssets embed.FS
 
-const PORT = "7733"
-const REPO_PATH = "../art-gallery-data"
-
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 
 	r := gin.Default()
+
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Next()
+	})
 	routes.ApiRoutes(r)
 
-	serverURL := "http://localhost:" + PORT
+	serverURL := "http://localhost" + config.PORT
 	fmt.Printf("[INFO]: Dashboard running at %s\n", serverURL)
-	log.Fatal(r.Run(":" + PORT))
+	log.Fatal(r.Run(config.PORT))
 }
