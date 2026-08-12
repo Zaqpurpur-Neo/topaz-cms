@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"archive/zip"
-	"art-cms/config"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -10,6 +9,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"topaz-workspace/config"
 
 	"github.com/gin-gonic/gin"
 )

@@ -3,7 +3,7 @@ package routes
 // basically like laravel structure
 
 import (
-	"art-cms/controllers"
+	"topaz-workspace/controllers"
 
 	"github.com/gin-gonic/gin"
 )

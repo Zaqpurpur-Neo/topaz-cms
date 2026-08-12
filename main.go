@@ -1,11 +1,11 @@
 package main
 
 import (
-	"art-cms/config"
-	"art-cms/routes"
 	"embed"
 	"fmt"
 	"log"
+	"topaz-workspace/config"
+	"topaz-workspace/routes"
 
 	"github.com/gin-gonic/gin"
 )

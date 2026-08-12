@@ -11,8 +11,8 @@
             <Gem size={18} />
         </div>
         <div class="text-section">
-            <h5>Topaz CMS</h5>
-            <p>Simple git based CMS</p>
+            <h5>Topaz Workspace</h5>
+            <p>Does all my work</p>
         </div>
     </div>
 
