@@ -1,11 +1,8 @@
 package controllers
 
 import (
-	"archive/zip"
 	"art-cms/config"
-	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -19,11 +16,12 @@ type KritaWorkspaceController struct {
 }
 
 type KritaArtworkModel struct {
-	Name      string `json:"name"`
-	Filename  string `json:"filename"`
-	RoutePath string `json:"routePath"`
-	RealPath  string `json:"realPath"`
-	CreatedAt string `json:"createdAt"`
+	Name        string `json:"name"`
+	Filename    string `json:"filename"`
+	RoutePath   string `json:"routePath"`
+	PreviewPath string `json:"previewPath"`
+	RealPath    string `json:"realPath"`
+	CreatedAt   string `json:"createdAt"`
 }
 
 type KritaWorkspaceModel struct {
@@ -111,11 +109,12 @@ func (c *KritaWorkspaceController) makeWorkspaces(folder string) (KritaWorkspace
 			continue
 		}
 		artworkModel := KritaArtworkModel{
-			Name:      fileName,
-			Filename:  file,
-			RealPath:  folder,
-			RoutePath: c.RoutePath + "/" + folderName + "/" + fileName,
-			CreatedAt: fileInfo.ModTime().Format(time.RFC3339),
+			Name:        fileName,
+			Filename:    file,
+			RealPath:    folder,
+			RoutePath:   c.RoutePath + "/" + folderName + "/board/" + fileName,
+			PreviewPath: c.RoutePath + "/" + folderName + "/preview/" + fileName,
+			CreatedAt:   fileInfo.ModTime().Format(time.RFC3339),
 		}
 		artwork = append(artwork, artworkModel)
 	}
@@ -127,61 +126,6 @@ func (c *KritaWorkspaceController) makeWorkspaces(folder string) (KritaWorkspace
 		Artworks:  artwork,
 		RoutePath: c.RoutePath + "/" + folderName,
 	}, nil
-}
-
-func (c *KritaWorkspaceController) getKritaPreviewImage(fileNameFullPath string) (io.ReadCloser, int64, error) {
-	zipReader, err := zip.OpenReader(fileNameFullPath)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	for _, file := range zipReader.File {
-		if file.Name == "preview.png" {
-			rc, err := file.Open()
-			if err != nil {
-				zipReader.Close()
-				return nil, 0, err
-			}
-
-			wrappedReader := &zipFileReadCloser{
-				ReadCloser:      rc,
-				fileCloser:      rc,
-				zipReaderCloser: zipReader,
-			}
-			return wrappedReader, file.FileInfo().Size(), nil
-		}
-	}
-
-	zipReader.Close()
-	return nil, 0, fmt.Errorf("preview.png not found")
-}
-
-// public
-
-func (c *KritaWorkspaceController) GetArtworkPreview(ctx *gin.Context) {
-	workspace := ctx.Param("workspace")
-	if workspace == "" {
-		ctx.JSON(400, gin.H{"error": "workspace is required"})
-		return
-	}
-
-	artwork := ctx.Param("artwork")
-	if artwork == "" {
-		ctx.JSON(400, gin.H{"error": "artwork is required"})
-		return
-	}
-
-	folderPath := config.KRITA_WORKSPACE_PATH + "/" + workspace
-	filePath := folderPath + "/" + artwork + config.KRITA_FILE_EXTENSION
-
-	imgStream, size, err := c.getKritaPreviewImage(filePath)
-	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
-		return
-	}
-	defer imgStream.Close()
-
-	ctx.DataFromReader(http.StatusOK, size, "image/png", imgStream, nil)
 }
 
 func (c *KritaWorkspaceController) GetKritaWorkspace(ctx *gin.Context) {

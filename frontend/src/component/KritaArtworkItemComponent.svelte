@@ -1,14 +1,11 @@
 <script lang="ts">
-    import { FolderOpenDot } from "@lucide/svelte";
-
-    import { API_URL } from "../common";
     import { p } from "../router";
     let { projectName, artworkName, description, preview } = $props();
 </script>
 
 <a
     class="krita-workspace-item"
-    href={p(`/krita-workspace/${projectName}/artwork/${artworkName}`)}
+    href={p(`/krita-workspace/${projectName}/board/${artworkName}`)}
 >
     <div class="wrapper-up">
         <img class="preview" src={preview} alt={projectName} />

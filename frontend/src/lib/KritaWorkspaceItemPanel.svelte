@@ -1,14 +1,14 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { API_URL } from "../common";
+    import { API_HOST, API_URL } from "../common";
     import KritaArtworkItemComponent from "../component/KritaArtworkItemComponent.svelte";
-    import { ChevronRight } from "@lucide/svelte";
     import Breadcrumb from "../component/Breadcrumb.svelte";
 
     type Artwork = {
         name: string;
         filename: string;
         routePath: string;
+        previewPath: string;
     };
 
     type WorkspaceItem = {
@@ -22,10 +22,6 @@
     let loading = $state<boolean>(true);
     let error = $state<string | null>(null);
     let workspaceByPath = $state<string | undefined | null>(null);
-
-    function imagePreviewPath(artwork: Artwork): string {
-        return `${API_URL}/krita/${workspaceItems?.name}/preview/${artwork.name}`;
-    }
 
     async function fetchWorkspaceItems(workspace: string) {
         try {
@@ -73,7 +69,7 @@
             <ul class="krita-workspace-list">
                 {#each workspaceItems.artworks as artwork}
                     <KritaArtworkItemComponent
-                        preview={imagePreviewPath(artwork)}
+                        preview={API_HOST + artwork.previewPath}
                         projectName={workspaceItems.name}
                         artworkName={artwork.name}
                         description="Krita workspace project"

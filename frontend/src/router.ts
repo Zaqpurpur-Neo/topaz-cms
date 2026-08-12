@@ -15,6 +15,7 @@ import FormPanel from "./lib/FormPanel.svelte";
 import GitPushPanel from "./lib/GitPushPanel.svelte";
 import KritaWorkspacePanel from "./lib/KritaWorkspacePanel.svelte";
 import KritaWorkspaceItemPanel from "./lib/KritaWorkspaceItemPanel.svelte";
+import KritaBoardPanel from "./lib/KritaBoardPanel.svelte";
 
 type RouteItem = {
   path: string;
@@ -59,6 +60,13 @@ const routerNameBuilder = createRouterName([
     title: "Krita Workspace",
     icon: Palette,
     component: KritaWorkspaceItemPanel,
+    isVisible: false,
+  },
+  {
+    path: "/krita-workspace/:workspace/board/:board",
+    title: "Krita Artwork",
+    icon: Palette,
+    component: KritaBoardPanel,
     isVisible: false,
   },
   {

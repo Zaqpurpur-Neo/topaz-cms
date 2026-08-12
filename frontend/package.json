@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@lucide/svelte": "^1.27.0",
+    "@xyflow/svelte": "^1.6.3",
     "sv-router": "^0.18.0"
   }
 }
