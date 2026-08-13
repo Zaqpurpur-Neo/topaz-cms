@@ -1,55 +1,102 @@
 <script lang="ts">
     import { Gem } from "@lucide/svelte";
 
-    import { routerName, p } from "../router";
+    import {
+        routerName,
+        p,
+        route,
+        isActive,
+        isSidebarClosed,
+        getActiveRouteItem,
+        navigate,
+    } from "../router";
     import { isActiveLink } from "sv-router";
+
+    import type { RouteItem } from "../router";
+    import { get } from "svelte/store";
+
+    let closedSidebar = $derived(isSidebarClosed());
+    let currentRoute = $derived(getActiveRouteItem());
+
+    function handleRouteClick(e: MouseEvent, item: RouteItem) {
+        if (item.keepQueryParam && item.getQuery) {
+            let query = item.getQuery();
+
+            if (query) {
+                e.preventDefault();
+
+                query = query.replace(/^%3F/i, "?");
+                if (!query.startsWith("?")) {
+                    query = `?${query}`;
+                }
+
+                const basePath = p(item.path);
+                const targetUrl = basePath + query;
+
+                window.history.pushState(null, "", targetUrl);
+                window.dispatchEvent(new PopStateEvent("popstate"));
+            }
+        }
+    }
 </script>
 
-<section class="side-panel">
-    <div class="side-panel-header">
-        <div class="icon-section">
-            <Gem size={18} />
+{#if !closedSidebar}
+    <section class="side-panel">
+        <div class="side-panel-header">
+            <div class="icon-section">
+                <Gem size={18} />
+            </div>
+            <div class="text-section">
+                <h5>Topaz Workspace</h5>
+                <p>Does all my work</p>
+            </div>
         </div>
-        <div class="text-section">
-            <h5>Topaz Workspace</h5>
-            <p>Does all my work</p>
+
+        <div class="gap-section"></div>
+
+        <p class="side-label-title">Tools</p>
+        <div class="route-side-panel">
+            {#each routerName as route}
+                {#if route.isVisible}
+                    <a
+                        class="route-link"
+                        {@attach isActiveLink({
+                            className: "route-link-active",
+                            startsWith: false,
+                        })}
+                        onclick={(e) => handleRouteClick(e, route)}
+                        href={p(route.path)}
+                    >
+                        <svelte:component this={route.icon} size={18} />
+                        <span>{route.title}</span>
+                    </a>
+                {/if}
+            {/each}
         </div>
-    </div>
 
-    <div class="gap-section"></div>
-
-    <div class="route-side-panel">
-        {#each routerName as route}
-            {#if route.isVisible}
-                <a
-                    class="route-link"
-                    {@attach isActiveLink({ className: "route-link-active" })}
-                    href={p(route.path)}
-                >
-                    <svelte:component this={route.icon} size={16} />
-                    <span>{route.title}</span>
-                </a>
-            {/if}
-        {/each}
-    </div>
-
-    <div class="badge-side-panel">
-        <div class="badge-wrapper">
-            <img src="/topaz.webp" alt="topaz badge" />
+        <div class="badge-side-panel">
+            <div class="badge-wrapper">
+                <img src="/topaz.webp" alt="topaz badge" />
+            </div>
         </div>
-    </div>
-</section>
+    </section>
+{/if}
 
 <style>
+    :global(.side-panel.close-sidebar) {
+        display: none;
+    }
+
     .side-panel {
         background-color: var(--gray-color-1);
-        padding: 0.95em 1em;
-        min-width: 16em;
+        padding: 0.75em;
+        min-width: 14em;
         width: min-content;
 
         display: flex;
         flex-direction: column;
         height: 100%;
+        border-right: 1px solid #262626;
     }
 
     .gap-section {
@@ -62,6 +109,7 @@
         align-items: center;
 
         gap: 0.5em;
+        padding: 0 0.35em;
     }
 
     .icon-section {
@@ -87,21 +135,25 @@
         }
     }
 
+    .side-label-title {
+        color: var(--text-color-2);
+        font-size: 1.05rem;
+        line-height: 1.75rem;
+        margin-bottom: 0.35em;
+        padding-left: 0.35em;
+    }
+
     .route-side-panel {
         display: flex;
         flex-direction: column;
-        gap: 0.5em;
-
-        :global(.route-link-active) {
-            background-color: var(--gray-color-2);
-        }
+        gap: 0.25em;
 
         .route-link {
             display: flex;
             align-items: center;
             gap: 0.5em;
 
-            color: var(--text-color);
+            color: #bfbfbf;
             text-decoration: none;
             padding: 0.5em;
             border-radius: 8px;
@@ -114,6 +166,12 @@
                 font-size: 0.875rem;
                 line-height: 1.25rem;
             }
+        }
+
+        :global(.route-link-active) {
+            background-color: var(--gray-color-2);
+
+            color: #efefef;
         }
     }
 

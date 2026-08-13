@@ -44,7 +44,7 @@
     .breadcrumb-item a {
         text-decoration: none;
         color: #fff;
-        font-size: 1.5rem;
+        font-size: 1.15rem;
         font-weight: 600;
 
         &:hover {

@@ -2,6 +2,7 @@ import { createRouter } from "sv-router";
 
 import type { SvelteComponent } from "svelte";
 import {
+  BookImage,
   GitPullRequest,
   Images,
   LayoutList,
@@ -16,13 +17,18 @@ import GitPushPanel from "./lib/GitPushPanel.svelte";
 import KritaWorkspacePanel from "./lib/KritaWorkspacePanel.svelte";
 import KritaWorkspaceItemPanel from "./lib/KritaWorkspaceItemPanel.svelte";
 import KritaBoardPanel from "./lib/KritaBoardPanel.svelte";
+import DanbooruPanel from "./lib/DanbooruPanel.svelte";
+import { getDanbooruQuery } from "./stores/queryCacheStore";
 
-type RouteItem = {
+export type RouteItem = {
   path: string;
   title: string;
   icon: LucideIcon;
   component: SvelteComponent | any;
   isVisible: boolean;
+  closeSidebar?: boolean;
+  keepQueryParam?: boolean;
+  getQuery?: () => string;
 };
 
 function createRouterName(router: RouteItem[]) {
@@ -68,6 +74,19 @@ const routerNameBuilder = createRouterName([
     icon: Palette,
     component: KritaBoardPanel,
     isVisible: false,
+    closeSidebar: true,
+  },
+  {
+    path: "/danbooru",
+    title: "Danbooru Reference",
+    icon: BookImage,
+    component: DanbooruPanel,
+    isVisible: true,
+    keepQueryParam: true,
+    getQuery: () => {
+      const res = getDanbooruQuery();
+      return res;
+    },
   },
   {
     path: "/media",
@@ -96,3 +115,17 @@ export const { routerName } = routerNameBuilder;
 export const { p, route, navigate, isActive } = createRouter(
   routerNameBuilder.routerSvRouter,
 );
+
+export function getActiveRouteItem(): RouteItem | undefined {
+  return routerName.find((item) => {
+    const regexPattern = item.path
+      .replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // escape special regex chars
+      .replace(/:[a-zA-Z0-9_]+/g, "[^/]+"); // replace :param with path segment regex
+
+    return new RegExp(`^${regexPattern}$`).test(String(route.pathname));
+  });
+}
+
+export function isSidebarClosed(): boolean {
+  return Boolean(getActiveRouteItem()?.closeSidebar);
+}

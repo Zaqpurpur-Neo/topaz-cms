@@ -4,11 +4,13 @@ package routes
 
 import (
 	"topaz-workspace/controllers"
+	"topaz-workspace/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 func ApiRoutes(g *gin.Engine) {
+	newDohClient := services.NewDOHHTTPClient()
 	api := g.Group("/api")
 	{
 		postController := controllers.NewPostController()
@@ -24,5 +26,12 @@ func ApiRoutes(g *gin.Engine) {
 		api.GET(kritaRoutePath+"/:workspace/original/:artwork", kritaArtworkController.GetArtworkOriginal)
 		api.GET(kritaRoutePath+"/:workspace/references/:artwork/:refname", kritaArtworkController.GetArtworkReferences)
 		api.GET(kritaRoutePath+"/:workspace/board/:artwork", kritaArtworkController.GetBoard)
+
+		danbooruRoutePath := "/danbooru"
+		danbooruLayerController := controllers.NewDanbooruLayerController(newDohClient)
+		api.GET(danbooruRoutePath+"/posts", danbooruLayerController.GetPosts)
+		api.GET(danbooruRoutePath+"/autocomplete", danbooruLayerController.GetAutocomplete)
+		api.GET(danbooruRoutePath+"/media", danbooruLayerController.GetMedia)
+
 	}
 }

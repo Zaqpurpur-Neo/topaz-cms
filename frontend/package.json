@@ -19,8 +19,10 @@
     "vite": "^8.1.1"
   },
   "dependencies": {
+    "@internationalized/date": "^3.12.3",
     "@lucide/svelte": "^1.27.0",
     "@xyflow/svelte": "^1.6.3",
+    "bits-ui": "^2.18.1",
     "sv-router": "^0.18.0"
   }
 }

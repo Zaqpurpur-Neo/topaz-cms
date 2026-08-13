@@ -1,6 +1,17 @@
 <script lang="ts">
     import { p } from "../router";
-    let { projectName, artworkName, description, preview } = $props();
+    let { projectName, artworkName, description, preview, createdAt } =
+        $props();
+
+    function formatDate(date: string) {
+        // format: May 26, 2025, how can i do this
+        const options: Intl.DateTimeFormatOptions = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        };
+        return new Date(date).toLocaleDateString(undefined, options);
+    }
 </script>
 
 <a
@@ -12,6 +23,7 @@
     </div>
     <span class="divider"></span>
     <div class="wrapper-down">
+        <p class="created-at">{formatDate(createdAt)}</p>
         <p class="project-name">{artworkName.replaceAll("-", " ")}</p>
         <p class="description">{description}</p>
     </div>
@@ -29,7 +41,7 @@
         text-decoration: none;
         color: #fff;
 
-        max-width: 20em;
+        max-width: 24em;
         overflow: hidden;
     }
 
@@ -48,18 +60,33 @@
     }
 
     .wrapper-up img {
-        width: 80%;
+        width: 100%;
         height: 100%;
         object-fit: cover;
     }
 
     .wrapper-down {
-        padding: 1em;
+        padding: 0.75em;
+    }
+
+    /* ellipsis text if overshot */
+    .project-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.75;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .description {
         font-size: 0.75rem;
-        color: #bbb;
+        color: #999;
         line-height: 1.5;
+    }
+
+    .created-at {
+        font-size: 0.75rem;
+        color: #777;
     }
 </style>

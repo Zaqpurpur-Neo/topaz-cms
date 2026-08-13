@@ -6,6 +6,7 @@
         Background,
         BackgroundVariant,
         type Node,
+        MiniMap,
     } from "@xyflow/svelte";
     import "@xyflow/svelte/dist/style.css";
 
@@ -13,14 +14,13 @@
     import ReferenceNode from "../component/ReferenceNode.svelte";
     import type { BoardResponse } from "../types/KritaBoardTypes";
     import { API_URL } from "../common";
-    import { ChevronLeft } from "@lucide/svelte";
+    import { ChevronLeft, RotateCw } from "@lucide/svelte";
 
     // --- Svelte 5 Runes ---
     let nodes = $state<Node[]>([]);
     let boardData = $state<BoardResponse | null>(null);
     let isLoading = $state(true);
 
-    let isLocked = $state(true);
     let workspaceId = $state<string>("");
     let boardId = $state<string>("");
 
@@ -30,7 +30,7 @@
         referenceImage: ReferenceNode,
     };
 
-    onMount(async () => {
+    async function boardDataInit() {
         try {
             workspaceId = window.location.pathname.split("/")[2];
             boardId = window.location.pathname.split("/")[4];
@@ -75,6 +75,18 @@
         } finally {
             isLoading = false;
         }
+    }
+
+    async function refreshBoard() {
+        isLoading = true;
+        nodes = [];
+        boardData = null;
+
+        await boardDataInit();
+    }
+
+    onMount(async () => {
+        await boardDataInit();
     });
 </script>
 
@@ -84,14 +96,18 @@
     {:else if boardData}
         <!-- Floating Info Badge -->
 
-        <div class="hud-badge">
+        <div class="hud-badge top-left">
             <div class="hud-top-bar">
                 <a href={`/krita-workspace/${workspaceId}`} class="back-button">
                     <ChevronLeft size={24} />
-                    <span>Back</span>
                 </a>
+                <button class="refresh-button" onclick={refreshBoard}>
+                    <RotateCw size={20} />
+                </button>
             </div>
+        </div>
 
+        <div class="hud-badge top-right">
             <div class="hud-header">
                 <span class="hud-title"
                     >{boardData.canvas.name || boardData.fileName}</span
@@ -112,16 +128,14 @@
             fitViewOptions={{ padding: 0.2 }}
             minZoom={0.01}
             maxZoom={10}
-            nodesDraggable={!isLocked}
-            nodesConnectable={false}
-            elementsDraggable={!isLocked}
             colorMode="dark"
         >
+            <MiniMap />
             <Background
                 variant={BackgroundVariant.Dots}
-                gap={28}
-                size={1.5}
-                color="#27272a"
+                gap={280}
+                size={20}
+                bgColor="#27272a"
             />
             <Controls />
         </SvelteFlow>
@@ -163,13 +177,23 @@
         background-color: rgba(24, 24, 27, 0.9);
         border: 1px solid #27272a;
         padding: 0.75rem 1rem;
-        border-radius: 0.75rem;
+        border-radius: 0.25rem;
         backdrop-filter: blur(12px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         display: flex;
         flex-direction: column;
         gap: 0.375rem;
-        min-width: 240px;
+    }
+
+    .hud-badge.top-left {
+        left: 1rem;
+        padding: 0.5em;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .hud-badge.top-right {
+        left: auto;
+        right: 1rem;
     }
 
     .hud-top-bar {
@@ -181,25 +205,29 @@
     }
 
     /* Back Button Styling */
-    .back-button {
-        display: inline-flex;
+    .back-button,
+    .refresh-button {
+        display: flex;
         align-items: center;
+        justify-content: center;
         gap: 0.25rem;
         color: #a1a1aa;
         text-decoration: none;
         font-size: 0.75rem;
         font-weight: 500;
-        padding: 0.25rem 0.5rem;
+        padding: 0.25rem;
+        aspect-ratio: 1 / 1;
+        width: 2rem;
+        border: none;
         border-radius: 0.375rem;
-        background-color: #18181b;
-        border: 1px solid #27272a;
         transition: all 0.15s ease;
+        background: none;
+        cursor: pointer;
     }
 
-    .back-button:hover {
+    .back-button:hover,
+    .refresh-button:hover {
         color: #ffffff;
-        background-color: #27272a;
-        border-color: #3f3f46;
     }
 
     .hud-header {

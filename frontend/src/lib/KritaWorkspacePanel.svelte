@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import { API_URL } from "../common";
     import KritaWorkspaceComponent from "../component/KritaWorkspaceComponent.svelte";
+    import Breadcrumb from "../component/Breadcrumb.svelte";
 
     const apiUrl = API_URL;
 
@@ -35,10 +36,21 @@
     onMount(async () => {
         workspacesResponse = await fetchWorkspaces();
     });
+
+    const breadcrumbItems = $derived([
+        {
+            label: "Home",
+            href: "/",
+        },
+        {
+            label: "Krita Workspace",
+            href: "/krita-workspace",
+        },
+    ]);
 </script>
 
 <section class="krita-workspace-panel">
-    <h2 class="title">Krita Workspace</h2>
+    <Breadcrumb items={breadcrumbItems} />
 
     <section class="krita-workspace-container">
         {#if loading}

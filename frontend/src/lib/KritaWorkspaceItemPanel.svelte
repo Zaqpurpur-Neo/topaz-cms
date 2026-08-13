@@ -9,6 +9,7 @@
         filename: string;
         routePath: string;
         previewPath: string;
+        createdAt: string; // format: 2026-08-10T20:01:33+07:00"
     };
 
     type WorkspaceItem = {
@@ -47,6 +48,10 @@
 
     const breadcrumbItems = $derived([
         {
+            label: "Home",
+            href: "/",
+        },
+        {
             label: "Krita Workspace",
             href: "/krita-workspace",
         },
@@ -72,6 +77,7 @@
                         preview={API_HOST + artwork.previewPath}
                         projectName={workspaceItems.name}
                         artworkName={artwork.name}
+                        createdAt={artwork.createdAt}
                         description="Krita workspace project"
                     />
                 {/each}
