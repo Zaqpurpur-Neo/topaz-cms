@@ -17,6 +17,7 @@ build/
 *.env
 *.air.toml
 /tmp
+topaz-*
 
 # Test binary, built with `go test -c`
 *.test

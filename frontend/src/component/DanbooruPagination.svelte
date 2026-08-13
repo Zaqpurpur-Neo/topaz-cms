@@ -28,7 +28,7 @@
         {#snippet children({ pages })}
             <div class="pagination-bar">
                 <Pagination.PrevButton class="page-nav-btn">
-                    <ChevronLeft /> Prev
+                    <ChevronLeft size={16} /> Prev
                 </Pagination.PrevButton>
 
                 <div class="pages-list">
@@ -45,7 +45,7 @@
                 </div>
 
                 <Pagination.NextButton class="page-nav-btn">
-                    Next <ChevronRight />
+                    Next <ChevronRight size={16} />
                 </Pagination.NextButton>
             </div>
         {/snippet}
@@ -82,6 +82,12 @@
         color: #efefef;
         cursor: pointer;
         transition: all 0.15s ease;
+    }
+
+    :global(.page-nav-btn) {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
     }
 
     :global(.page-nav-btn:hover:not(:disabled)),

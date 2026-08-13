@@ -1,11 +1,11 @@
 package main
 
 import (
-	"embed"
 	"fmt"
 	"log"
 	"net/http"
 	"path/filepath"
+
 	"topaz-workspace/config"
 	"topaz-workspace/routes"
 
@@ -13,9 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var frontendStatic embed.FS
-
-// i need to add frontend assets, from the frontend/dist folder
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 
@@ -35,20 +32,17 @@ func main() {
 	}))
 
 	r.NoRoute(func(c *gin.Context) {
-		// Pastikan rute yang salah ketik di API tetap mengembalikan error 404 API,
-		// bukan malah mengirim file HTML frontend
 		if filepath.HasPrefix(c.Request.URL.Path, "/api") {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Rute API tidak ditemukan"})
 			return
 		}
-
-		// Kirim index.html untuk diurus oleh React/Vue/Svelte router
 		c.File(filepath.Join("frontend/dist", "index.html"))
 	})
 
 	routes.ApiRoutes(r)
 
 	serverURL := "http://localhost" + config.PORT
-	fmt.Printf("[INFO]: Dashboard running at %s\n", serverURL)
+	fmt.Printf("[INFO]: Topaz Gin Server running at %s\n", serverURL)
+
 	log.Fatal(r.Run(config.PORT))
 }

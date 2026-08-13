@@ -1,3 +1,5 @@
+import type { DanbooruPost } from "./types/DanbooruTypes";
+
 export function getMediumPreviewUrl(post: DanbooruPost): string | null {
   if (post.is_banned || post.is_deleted) return null;
 
